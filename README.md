@@ -1,5 +1,6 @@
 # Ethereum Proof-of-Stake Devnet
 
+You can follow the step by step guide at https://docs.prylabs.network/docs/advanced/proof-of-stake-devnet or linkedin post https://www.linkedin.com/pulse/guide-setting-up-fully-functional-prysm-beacon-node-validator-chan-rbwcc/ 
 This repository provides a docker-compose file to run a fully-functional, local development network for Ethereum with proof-of-stake enabled. This configuration uses [Prysm](https://github.com/prysmaticlabs/prysm) as a consensus client and [go-ethereum](https://github.com/ethereum/go-ethereum) for execution. **It starts from proof-of-stake** and does not go through the Ethereum merge.
 
 This sets up a single node development network with 64 deterministically-generated validator keys to drive the creation of blocks in an Ethereum proof-of-stake chain. Here's how it works:
@@ -14,7 +15,7 @@ The development net is fully functional and allows for the deployment of smart c
 First, install Docker. Then, run:
 
 ```
-git clone https://github.com/rauljordan/eth-pos-devnet && cd eth-pos-devnet
+git clone https://github.com/OffchainLabs/eth-pos-devnet && cd eth-pos-devnet
 ./clean.sh
 docker compose up -d
 ```
@@ -61,9 +62,10 @@ INFO [08-19|00:44:42.747] Chain head was updated                   number=53 has
 - The default account used in the go-ethereum node is address `0x123463a4b065722e99115d6c222f267d9cabb524` which comes seeded with ETH for use in the network. This can be used to send transactions, deploy contracts, and more
 - The default account, `0x123463a4b065722e99115d6c222f267d9cabb524` is also set as the fee recipient for transaction fees proposed validators in Prysm. This address will be receiving the fees of all proposer activity
 - The go-ethereum JSON-RPC API is available at http://geth:8545
-- The Prysm client's REST APIs are available at http://beacon-chain:3500. For more info on what these APIs are, see [here](https://ethereum.github.io/beacon-APIs/)
-- The Prysm client also exposes a gRPC API at http://beacon-chain:4000
+- The Prysm client's REST APIs are available at http://beacon-chain:3500. For more info on what these APIs are, see [here](https://ethereum.github.io/beacon-APIs/) or a swagger at https://ethereum.github.io/beacon-APIs/#/Beacon/getStateValidators 
+- The Prysm client also exposes a gRPC API at http://beacon-chain:4000 see [here](https://docs.prylabs.network/docs/how-prysm-works/prysm-public-api) But this is deprecated
 
 <img width="1631" alt="5" src="https://user-images.githubusercontent.com/5572669/186052294-70909835-210f-4b13-86a3-cf1f568bb8a3.png">
 <img width="1693" alt="3" src="https://user-images.githubusercontent.com/5572669/186052298-54b82ff2-a901-482e-9e5a-a7c265605ad6.png">
 <img width="1426" alt="1" src="https://user-images.githubusercontent.com/5572669/186052301-dd487b50-183a-4fa6-bbec-216f32d6f03a.png">
+

@@ -4,6 +4,10 @@ PRESET_BASE: interop
 # Genesis
 GENESIS_FORK_VERSION: 0x20000089
 
+# Electra
+# Important! from https://www.linkedin.com/pulse/guide-setting-up-fully-functional-prysm-beacon-node-validator-chan-rbwcc/
+ELECTRA_FORK_VERSION: 0x15000000
+
 # Altair
 ALTAIR_FORK_EPOCH: 0
 ALTAIR_FORK_VERSION: 0x20000090

@@ -172,6 +172,18 @@ beacon-chain:
 
 *This should be changed as private key of 0x123463a4b065722e99115d6c222f267d9cabb524 is of public knowledge*
 
+## Time between blocks
+
+To configure the time in senconds betweens blocks you need to modify the SECONDS_PER_SLOT at [config.yml](./consensus/config.yml) of the becon chain
+
+```yml
+# Time parameters
+SECONDS_PER_SLOT: 12
+SLOTS_PER_EPOCH: 6
+```
+
+Here the default is set as 12 seconds between blocks. 
+
 # Mac M1 (ARM)
 On docker compose we have added `platform: "linux/amd64"` in order to run it on Mac M1, this configuration is not needed on other platforms
 
@@ -184,3 +196,4 @@ Changes needed to be made for mainnet:
 - Set geth cors, origins, and other related data that involves security.
 - Set defined peers to connect to other validators.
 - Set a public node that is connected to the private network, so people outside the network can discover it and connect, but they can't reach the private network with the valdiators.
+- Follow [security best practices](https://docs.prylabs.network/docs/security-best-practices)

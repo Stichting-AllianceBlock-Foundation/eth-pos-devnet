@@ -1,37 +1,33 @@
 # Ethereum Proof-of-Stake Devnet
 
-You can follow the step by step guide at https://docs.prylabs.network/docs/advanced/proof-of-stake-devnet or linkedin post https://www.linkedin.com/pulse/guide-setting-up-fully-functional-prysm-beacon-node-validator-chan-rbwcc/ 
+You can follow the step by step guide at https://docs.prylabs.network/docs/advanced/proof-of-stake-devnet or for POA see linkedin post https://www.linkedin.com/pulse/guide-setting-up-fully-functional-prysm-beacon-node-validator-chan-rbwcc/ 
 This repository provides a docker-compose file to run a fully-functional, local development network for Ethereum with proof-of-stake enabled. This configuration uses [Prysm](https://github.com/prysmaticlabs/prysm) as a consensus client and [go-ethereum](https://github.com/ethereum/go-ethereum) for execution. **It starts from proof-of-stake** and does not go through the Ethereum merge.
 
 This sets up a single node development network with 64 deterministically-generated validator keys to drive the creation of blocks in an Ethereum proof-of-stake chain. Here's how it works:
 
-1. We initialize a go-ethereum, proof-of-work development node from a genesis config
+1. We initialize a go-ethereum, proof-of-work development node from a genesis config. The beacon chain genesis block is set 15 seconds after the geth genesis to give it time to sync. 
 2. We initialize a Prysm beacon chain, proof-of-stake development node from a genesis config
 
 The development net is fully functional and allows for the deployment of smart contracts and all the features that also come with the Prysm consensus client such as its rich set of APIs for retrieving data from the blockchain. This development net is a great way to understand the internals of Ethereum proof-of-stake and to mess around with the different settings that make the system possible.
 
 ## Using
 
-First, install Docker. Then, run:
+Then install Docker and run:
 
 ```
-git clone https://github.com/OffchainLabs/eth-pos-devnet && cd eth-pos-devnet
-./clean.sh
-docker compose up -d
+docker-compose up
 ```
 
 You will see the following:
 
 ```
 $ docker compose up -d
-[+] Running 7/7
- ⠿ Network eth-pos-devnet_default                          Created
- ⠿ Container eth-pos-devnet-geth-genesis-1                 Started
- ⠿ Container eth-pos-devnet-create-beacon-chain-genesis-1  Started
- ⠿ Container eth-pos-devnet-geth-account-1                 Started
- ⠿ Container eth-pos-devnet-geth-1                         Started
+[+] Running 5/5
+ ⠿ Container eth-pos-devnet-create-beacon-chain-genesis-1  Exited
  ⠿ Container eth-pos-devnet-beacon-chain-1                 Started
+ ⠿ Container eth-pos-devnet-geth-genesis-1                 Exited
  ⠿ Container eth-pos-devnet-validator-1                    Started
+ ⠿ Container eth-pos-devnet-geth-1                         Started
 ```
 
 Each time you restart, you can wipe the old data using `./clean.sh`.
@@ -55,6 +51,10 @@ INFO [08-19|00:44:42.733] Imported new potential chain segment     blocks=1 txs=
 INFO [08-19|00:44:42.747] Chain head was updated                   number=53 hash=ee046e..e56b0c root=815538..801014 elapsed="821.084µs"
 ```
 
+
+We have also added a small  postman collection so you can test the services at [go-eth-stake.postman_collection.json](./go-eth-stake.postman_collection.json)
+
+
 # Available Features
 
 - Starts from the Capella Ethereum hard fork
@@ -69,3 +69,118 @@ INFO [08-19|00:44:42.747] Chain head was updated                   number=53 has
 <img width="1693" alt="3" src="https://user-images.githubusercontent.com/5572669/186052298-54b82ff2-a901-482e-9e5a-a7c265605ad6.png">
 <img width="1426" alt="1" src="https://user-images.githubusercontent.com/5572669/186052301-dd487b50-183a-4fa6-bbec-216f32d6f03a.png">
 
+# Configuration
+
+## Secrets
+
+You should change [jwtsecret](./execution/jwtsecret) see [here](https://docs.prylabs.network/docs/execution-node/authentication) for more information.
+There is the posibility to add geth password, is currently not added in the docker compose, but it should be added for mainnet
+
+## Genesis.json
+
+The [genesis.json](./execution/genesis.json) corresponds to the values of the first block in the blockchain. The most important parameters to modify are:
+
+### Chain Id
+To change chainId you need to modify in [genesis.json](./execution/genesis.json) the following value
+
+```json
+"chainId": 32382, 
+```
+
+And then modify in [docker-compose.yml](./docker-compose.yml) the following configuration
+
+```yml
+beacon-chain:
+    image: "gcr.io/prysmaticlabs/prysm/beacon-chain:v5.1.2"
+    platform: "linux/amd64"
+    command:
+      # We specify the chain id used by our execution client
+      - --chain-id=${CHAIN_ID:-32382}
+```
+
+
+
+This is the chainId that will be used, this value is an example, we should select a correct one that is not used by any other network for testnet. You can check the link in [chainlist](https://chainlist.org/) or [ethereum-lists/chains](https://github.com/ethereum-lists/chains)
+
+### Nonce
+
+```json
+"nonce": 0x0, 
+```
+
+This nonce is a random number, the main purpose is to keep unwanted nodes (don't match the nonce) out of the network. This vale should be replaced witha  random value
+
+### Accounts
+
+The genesis.json sets the amount that will allocated to some addresses, this is given at `alloc`
+
+```json
+"alloc": {
+    "123463a4b065722e99115d6c222f267d9cabb524": {
+        "balance": "0x43c33c1937564800000"
+    },
+```
+
+Balance is the hex amount in WEI
+*Address 0x123463a4b065722e99115d6c222f267d9cabb524 private key is public, so YOU SHOULD CHANGE THIS ACCOUNTS*
+
+
+There are also smart contracts that are added at this point, the most important one is the deposit contract address 4242424242424242424242424242424242424242, that is used by Prysm
+
+```json
+"4242424242424242424242424242424242424242": {
+			"code": "0x6080604052600...
+```
+
+*This should also be set at [consensus/config.yml](./consensus/config.yml)
+
+```yml
+# Deposit contract
+DEPOSIT_CONTRACT_ADDRESS: 0x4242424242424242424242424242424242424242
+```
+
+### Validator
+
+The first validator is obtained from [genesis.json](./execution/genesis.json) extraData, in this example it's the address 0x123463a4b065722e99115d6c222f267d9cabb524.
+
+```json
+"extraData": "0x0000000000000000000000000000000000000000000000000000000000000000123463a4b065722e99115d6c222f267d9cabb5240000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+```
+
+Take into account that this account has to be accesible by the geth node, that's why in the [docker-compose.yml](./docker-compose.yml) we unlock it:
+
+```yml
+geth:
+    image: "ethereum/client-go:v1.14.12"
+    command:
+      - --unlock=0x123463a4b065722e99115d6c222f267d9cabb524
+```
+
+
+## Fee Recipient
+
+Fee Recipient is a feature that lets you specify a priority fee recipient address on your validator client instance and beacon node.
+Currently is configured for 0x123463a4b065722e99115d6c222f267d9cabb524 at docker-compose.yml
+
+```yml
+beacon-chain:
+    image: "gcr.io/prysmaticlabs/prysm/beacon-chain:v5.1.2"
+    platform: "linux/amd64"
+    command:
+      - --suggested-fee-recipient=0x123463a4b065722e99115d6c222f267d9cabb524
+```
+
+*This should be changed as private key of 0x123463a4b065722e99115d6c222f267d9cabb524 is of public knowledge*
+
+# Mac M1 (ARM)
+On docker compose we have added `platform: "linux/amd64"` in order to run it on Mac M1, this configuration is not needed on other platforms
+
+# Mainnet
+Changes needed to be made for mainnet:
+- Change [Chain ID](#chain-id)
+- Configure [Fee Recipient Address](#fee-recipient)
+- Configure mint balance [Accounts](#accounts)
+- Put the nodes inside a firewall and private network to avoid them being called from the outside using http calls and such.
+- Set geth cors, origins, and other related data that involves security.
+- Set defined peers to connect to other validators.
+- Set a public node that is connected to the private network, so people outside the network can discover it and connect, but they can't reach the private network with the valdiators.

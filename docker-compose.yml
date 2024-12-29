@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # Creates a genesis state for the beacon chain using a YAML configuration file and
   # a deterministic set of 64 validators.
@@ -8,7 +7,7 @@ services:
     command:
       - testnet
       - generate-genesis
-      - --fork=capella
+      - --fork=deneb
       - --num-validators=64
       - --genesis-time-delay=15
       - --output-ssz=/consensus/genesis.ssz
@@ -17,14 +16,6 @@ services:
       - --geth-genesis-json-out=/execution/genesis.json
     volumes:
       - ./consensus:/consensus
-      - ./execution:/execution
-
-  # Removes the database of the go-ethereum execution client to ensure we start from a clean state.
-  # (geth has a `removedb` option, but it asks for a keyboard confirmation, so we use this instead)
-  geth-remove-db:
-    image: "alpine:3.21.0"
-    command: rm -rf /execution/geth
-    volumes:
       - ./execution:/execution
 
   # Sets up the genesis configuration for the go-ethereum client from a JSON file.
@@ -37,15 +28,13 @@ services:
     depends_on:
       create-beacon-chain-genesis:
         condition: service_completed_successfully
-      geth-remove-db:
-        condition: service_completed_successfully
 
   # Runs a Prysm beacon chain from a specified genesis state created in the previous step
   # and connects to go-ethereum in the same network as the execution client.
   # The account used in go-ethereum is set as the suggested fee recipient for transactions
   # proposed via the validators attached to the beacon node.
   beacon-chain:
-    image: "gcr.io/prysmaticlabs/prysm/beacon-chain:v5.1.2"
+    image: "gcr.io/prysmaticlabs/prysm/beacon-chain:v5.2.0"
     platform: "linux/amd64"
     command:
       - --datadir=/consensus/beacondata
@@ -57,8 +46,8 @@ services:
       # The chain configuration file used for setting up Prysm
       - --chain-config-file=/consensus/config.yml
       # We specify the chain id used by our execution client
-      - --contract-deployment-block=0
       - --chain-id=${CHAIN_ID:-32382}
+      - --contract-deployment-block=0
       - --rpc-host=0.0.0.0
       - --grpc-gateway-host=0.0.0.0
       - --execution-endpoint=http://geth:8551
@@ -85,7 +74,7 @@ services:
   # Runs the go-ethereum execution client with the specified, unlocked account and necessary
   # APIs to allow for proof-of-stake consensus via Prysm.
   geth:
-    image: "ethereum/client-go:latest"
+    image: "ethereum/client-go:v1.14.12"
     command:
       - --http
       - --http.api=eth,net,web3
@@ -121,7 +110,7 @@ services:
   # We run a validator client with 64, deterministically-generated keys that match
   # The validator keys present in the beacon chain genesis state generated a few steps above.
   validator:
-    image: "gcr.io/prysmaticlabs/prysm/validator:v5.1.2"
+    image: "gcr.io/prysmaticlabs/prysm/validator:v5.2.0"
     command:
       - --beacon-rpc-provider=beacon-chain:4000
       - --datadir=/consensus/validatordata

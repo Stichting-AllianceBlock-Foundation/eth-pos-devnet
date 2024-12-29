@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "078ea7e1-b90e-44c6-897b-a6851826b3f2",
+		"name": "go-eth-stake",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "412035"
+	},
+	"item": [
+		{
+			"name": "beacon",
+			"item": [
+				{
+					"name": "beacon genesis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3500/eth/v1/beacon/genesis",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3500",
+							"path": [
+								"eth",
+								"v1",
+								"beacon",
+								"genesis"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validators",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3500/eth/v1/beacon/genesis",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3500",
+							"path": [
+								"eth",
+								"v1",
+								"beacon",
+								"genesis"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Becon Node API from Ethereum\n\n[https://ethereum.github.io/beacon-APIs/](https://ethereum.github.io/beacon-APIs/)\n\nThis is used for validators and staking"
+		},
+		{
+			"name": "rpc-node",
+			"item": [
+				{
+					"name": "getLatestBlock",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "RPC calls from ethereum like  \n[https://www.quicknode.com/docs/ethereum/eth_blockNumber](https://www.quicknode.com/docs/ethereum/eth_blockNumber)  \nYou can also use this url to deploy smart contracts with remix or hardhat"
+		}
+	]
+}

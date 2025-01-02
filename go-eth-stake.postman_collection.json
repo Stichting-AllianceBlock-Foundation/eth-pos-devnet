@@ -37,7 +37,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3500/eth/v1/beacon/genesis",
+							"raw": "http://localhost:3500/eth/v1/beacon/states/head/validators",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -47,7 +47,9 @@
 								"eth",
 								"v1",
 								"beacon",
-								"genesis"
+								"states",
+								"head",
+								"validators"
 							]
 						}
 					},
@@ -70,6 +72,174 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getChainId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"eth_chainId\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "netVersion",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"net_version\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "netPeerCoount",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"net_peerCount\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "netListening",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"net_listening\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "txpoolStatus",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"txpool_status\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8545",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8545"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "txpoolContent",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"method\":\"txpool_content\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}",
 							"options": {
 								"raw": {
 									"language": "json"

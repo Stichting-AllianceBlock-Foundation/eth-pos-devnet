@@ -1,4 +1,3 @@
 #!/bin/bash
-docker rm -f $(docker ps -a -q)
 rm -Rf ./consensus/beacondata ./consensus/validatordata ./consensus/genesis.ssz
-./geth-remove-db.sh
+bash geth-remove-db.sh

@@ -187,6 +187,10 @@ Here the default is set as 12 seconds between blocks.
 # Mac M1 (ARM)
 On docker compose we have added `platform: "linux/amd64"` in order to run it on Mac M1, this configuration is not needed on other platforms
 
+# Archive nodes
+
+When running an archive node besides the `--gcmode=archive` flag you'll need to ad the `--state.scheme=hash` flag at geth init, otherwise you'll get a [Failed to register the Ethereum service: incompatible state scheme](https://github.com/ethereum-optimism/op-geth/issues/375) error
+
 # Mainnet
 Changes needed to be made for mainnet:
 - Change [Chain ID](#chain-id)

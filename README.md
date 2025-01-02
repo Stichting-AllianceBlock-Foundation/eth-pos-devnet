@@ -192,6 +192,7 @@ Changes needed to be made for mainnet:
 - Change [Chain ID](#chain-id)
 - Configure [Fee Recipient Address](#fee-recipient)
 - Configure mint balance [Accounts](#accounts)
+- The geth flags `--http.api=txpool,debug`, `--ws.api=txpool,debug`, `--gcmode=archive` and `--state.scheme=hash` should be removed from the geth node connected to the validator and we should have a dedicated geth node with this flags for the explorer.
 - Put the nodes inside a firewall and private network to avoid them being called from the outside using http calls and such.
 - Set geth cors, origins, and other related data that involves security.
 - Set defined peers to connect to other validators.

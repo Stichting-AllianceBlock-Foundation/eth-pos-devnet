@@ -184,6 +184,25 @@ SLOTS_PER_EPOCH: 6
 
 Here the default is set as 12 seconds between blocks. 
 
+## New forks
+
+If you see an error like `error="could not set config params: version 0x06000000 for fork fulu in config interop conflicts with existing config`.
+It means that there is a hard fork detected at the Beacon chain but it's not configured at the [config.yml](./consensus/config.yml).
+We should add the new fork adding plus one to the previous fork value like this
+
+```yml
+# Fulu
+FUKU_FORK_VERSION: 0x20000095
+```
+
+This adds the fork but it does not activate it, in order to activate it you should add a fork EPOC like this
+
+```yml
+# Deneb
+DENEB_FORK_EPOCH: 0
+DENEB_FORK_VERSION: 0x20000093
+```
+
 # Mac M1 (ARM)
 On docker compose we have added `platform: "linux/amd64"` in order to run it on Mac M1, this configuration is not needed on other platforms
 
@@ -202,3 +221,9 @@ Changes needed to be made for mainnet:
 - Set defined peers to connect to other validators.
 - Set a public node that is connected to the private network, so people outside the network can discover it and connect, but they can't reach the private network with the valdiators.
 - Follow [security best practices](https://docs.prylabs.network/docs/security-best-practices)
+
+# FAQ / Common Issues
+
+- ```Nil finalized block cannot evict old blobs```
+
+This is expected log from Geth until a block is 'finalized'. The first finalized block will occur after 24 blocks.

@@ -59,7 +59,7 @@ services:
       - --execution-endpoint=http://geth:8551
       - --accept-terms-of-use
       - --jwt-secret=/execution/jwtsecret
-      - --suggested-fee-recipient=0x123463a4b065722e99115d6c222f267d9cabb524
+      - --suggested-fee-recipient=0xAAA91876b1F31feF286F5f1290b9c893aE56A08C
       - --minimum-peers-per-subnet=0
       - --enable-debug-rpc-endpoints
       - --force-clear-db
@@ -96,7 +96,7 @@ services:
       - --authrpc.jwtsecret=/execution/jwtsecret
       - --datadir=/execution
       - --allow-insecure-unlock
-      - --unlock=0x123463a4b065722e99115d6c222f267d9cabb524
+      - --unlock=0xAAA91876b1F31feF286F5f1290b9c893aE56A08C
       - --password=/execution/geth_password.txt
       - --nodiscover
       - --syncmode=full

@@ -90,7 +90,6 @@ services:
     volumes:
       - ./consensus:/consensus
       - ./execution:/execution
-      - ./execution/retrh
       - ./execution/jwtsecret:/root/jwt/jwt.hex
     # https://paradigmxyz.github.io/reth/run/troubleshooting.html#concurrent-database-access-error-using-containersdocker
     pid: host

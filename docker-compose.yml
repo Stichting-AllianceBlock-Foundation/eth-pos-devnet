@@ -21,13 +21,12 @@ services:
       - ./execution:/execution
 
   # Sets up the genesis configuration for the go-ethereum client from a JSON file.
-  geth-genesis:
-    image: "ethereum/client-go:v1.14.12"
-    command: 
-      - --datadir=/execution
-      - --state.scheme=hash
-      - init
-      - /execution/genesis.json
+  reth-genesis:
+    image: "ghcr.io/paradigmxyz/reth:latest"
+    command: >
+      init
+      --datadir /execution
+      --chain /execution/genesis.json
     volumes:
       - ./execution:/execution
       - ./execution/genesis.json:/execution/genesis.json
@@ -56,7 +55,7 @@ services:
       - --contract-deployment-block=0
       - --rpc-host=0.0.0.0
       - --grpc-gateway-host=0.0.0.0
-      - --execution-endpoint=http://geth:8551
+      - --execution-endpoint=http://reth:8551
       - --accept-terms-of-use
       - --jwt-secret=/execution/jwtsecret
       - --suggested-fee-recipient=0xAAA91876b1F31feF286F5f1290b9c893aE56A08C
@@ -79,41 +78,49 @@ services:
 
   # Runs the go-ethereum execution client with the specified, unlocked account and necessary
   # APIs to allow for proof-of-stake consensus via Prysm.
-  geth:
-    image: "ethereum/client-go:v1.14.12"
-    command:
-      - --http
-      - --http.api=engine,eth,net,web3,txpool,debug
-      - --http.addr=0.0.0.0
-      - --http.corsdomain=*
-      - --http.vhosts=*
-      - --ws
-      - --ws.api=engine,eth,net,web3,txpool,debug
-      - --ws.addr=0.0.0.0
-      - --ws.origins=*
-      - --authrpc.vhosts=*
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.jwtsecret=/execution/jwtsecret
-      - --datadir=/execution
-      - --allow-insecure-unlock
-      - --unlock=0xAAA91876b1F31feF286F5f1290b9c893aE56A08C
-      - --password=/execution/geth_password.txt
-      - --nodiscover
-      - --syncmode=full
-      - --gcmode=archive
+  reth:
+    restart: unless-stopped
+    image: ghcr.io/paradigmxyz/reth
     ports:
-      - 8551:8551
-      - 8545:8545
-      - 8546:8546
+      - '9001:9001' # metrics
+      - '30303:30303' # eth/66 peering
+      - '8545:8545' # rpc
+      - '8546:8546' # rpc
+      - '8551:8551' # engine
+    volumes:
+      - ./consensus:/consensus
+      - ./execution:/execution
+      - ./execution/retrh
+      - ./execution/jwtsecret:/root/jwt/jwt.hex
+    # https://paradigmxyz.github.io/reth/run/troubleshooting.html#concurrent-database-access-error-using-containersdocker
+    pid: host
+    # For Sepolia, replace `--chain mainnet` with `--chain sepolia`
+    # For Holesky, replace `--chain mainnet` with `--chain holesky`
+    command: >
+      node
+      --chain /execution/genesis.json
+      --datadir /execution
+      --metrics 0.0.0.0:9001
+      --log.file.directory /root/logs
+      --authrpc.addr 0.0.0.0
+      --authrpc.port 8551
+      --authrpc.jwtsecret /root/jwt/jwt.hex
+      --http
+      --http.api all
+      --http.addr 0.0.0.0
+      --http.port 8545
+      --http.corsdomain "*"
+      --ws
+      --ws.api all
+      --ws.addr 0.0.0.0
+      --ws.port 8546
+      --ws.origins "*"
+      --full
     depends_on:
-      geth-genesis:
+      reth-genesis:
         condition: service_completed_successfully
       beacon-chain:
         condition: service_started
-    volumes:
-      - ./execution:/execution
-      - ./execution/jwtsecret:/execution/jwtsecret
-      - ./execution/geth_password.txt:/execution/geth_password.txt
 
   # We run a validator client with 64, deterministically-generated keys that match
   # The validator keys present in the beacon chain genesis state generated a few steps above.
